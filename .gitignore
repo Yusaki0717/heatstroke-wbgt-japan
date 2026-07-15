@@ -1,0 +1,21 @@
+# ---- Data (do NOT commit; download from official sources, see README) ----
+data/*.xlsx
+data/*.csv
+data/*.xls
+!data/README.md
+
+# ---- Analysis outputs ----
+output/
+*.pdf
+*.png
+
+# ---- R session / IDE ----
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
