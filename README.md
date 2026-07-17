@@ -1,3 +1,4 @@
+[README.md](https://github.com/user-attachments/files/30113827/README.md)
 # Temporal changes in the WBGT–heat ambulance dispatch association across Japan (2015–2023)
 
 Analysis code for a two-stage distributed lag non-linear model (DLNM) with
@@ -77,7 +78,8 @@ Source: https://www.wbgt.env.go.jp/record_data.php
 install.packages(c(
   "readxl", "dplyr", "tidyr", "lubridate",
   "dlnm", "gnm", "mixmeta",
-  "ggplot2", "patchwork", "splines"
+  "ggplot2", "patchwork", "splines",
+  "sf", "viridis", "rnaturalearth", "rnaturalearthdata"
 ))
 ```
 
@@ -86,29 +88,36 @@ install.packages(c(
 reduction), [`gnm`](https://cran.r-project.org/package=gnm) (conditional
 quasi-Poisson first stage), and
 [`mixmeta`](https://cran.r-project.org/package=mixmeta) (multivariate REML
-meta-analysis).
+meta-analysis). `sf`, `viridis`, and `rnaturalearth`/`rnaturalearthdata` are
+needed only for the choropleth maps (`R/spatial_maps_and_af.R`).
 
 ---
 
 ## How to run
 
-1. Clone the repository and place all data files in `data/` (see above).
-2. From the repository root:
+Run the four scripts **in order** from the repository root; each depends on
+objects left in the workspace by the previous one.
 
 ```r
-source("R/heatstroke_dlnm_analysis.R")
+source("R/heatstroke_dlnm_analysis.R")        # 1. main pipeline (required first)
+source("R/spatial_maps_and_af.R")              # 2. maps + AF/AN (Fig 4, Fig 6, Table 5)
+source("R/revision_sensitivity_analyses.R")    # 3. response-to-reviewers analyses
+source("R/sensitivity_knots_S5.R")             # 4. knot-placement sensitivity (Table S5)
 ```
 
-The script creates `output/` and `output/figures/` and writes the summary
-tables (`table1_summary.csv`, `rr_comparison_by_period.csv`, …) and the main
-figures there.
+Place all data files in `data/` first (see above). Each script creates its own
+`output/` subfolders as needed and writes CSVs and figures there.
 
-3. To reproduce the knot-placement sensitivity analysis (Table S5), run the
-main script first (so that `dat` and the fitted objects are in memory), then:
-
-```r
-source("R/sensitivity_knots_S5.R")
-```
+> **Note on `R/spatial_maps_and_af.R`:** its opening block ("0. Bridge")
+> derives two intermediate files (`output/pref_rr_at_p95.csv`,
+> `output/rr_change_post_vs_pre.csv`) from the `blup_results` object produced
+> by the main script. This bridge was reconstructed for this repository
+> release and has been verified: `pref_rr_at_p95.csv` reproduces the Table S1
+> values exactly (e.g. post-pandemic Kagoshima 2.36, Aichi 4.03), and
+> `rr_change_post_vs_pre.csv` correctly restricts to the 44 prefectures that
+> converged in both the pre- and post-pandemic periods (excluding Hokkaido,
+> Aomori, and Yamaguchi), matching the range reported in Table S2
+> (−10.2% to −50.6%).
 
 ---
 
@@ -120,10 +129,12 @@ source("R/sensitivity_knots_S5.R")
 ├── LICENSE
 ├── .gitignore
 ├── R/
-│   ├── heatstroke_dlnm_analysis.R   # full pipeline (Parts 0–8)
-│   └── sensitivity_knots_S5.R       # knot-placement sensitivity (Table S5)
+│   ├── heatstroke_dlnm_analysis.R        # 1. full pipeline (Parts 0–8)
+│   ├── spatial_maps_and_af.R             # 2. maps + attributable fraction/number
+│   ├── revision_sensitivity_analyses.R   # 3. response-to-reviewers analyses
+│   └── sensitivity_knots_S5.R            # 4. knot-placement sensitivity (Table S5)
 └── data/
-    └── README.md                    # placeholder; put downloaded data here
+    └── README.md                         # placeholder; put downloaded data here
 ```
 
 ### What the main script does (Parts 0–8)
@@ -145,16 +156,41 @@ source("R/sensitivity_knots_S5.R")
   relative risks at reference percentiles, and the period comparison
   (`rr_comparison_by_period.csv`, figures).
 
+### What `spatial_maps_and_af.R` does
+
+- **Part 0 (Bridge)** — derives per-prefecture RR-at-P95 tables from
+  `blup_results` (see note above).
+- **Part 1** — downloads a Japan prefecture shapefile (NaturalEarth) and
+  matches it to `pref_code`.
+- **Part A** — three choropleth maps: post-pandemic RR (→ Fig 6), all three
+  periods side by side, and percent change post- vs pre-pandemic (→ Fig 4).
+- **Part B** — attributable fraction/number by prefecture and period, for
+  all-severity and severe-case outcomes (→ Table 5), plus an AF map and bar
+  chart.
+
+### What `revision_sensitivity_analyses.R` does
+
+Each block answers a specific reviewer comment and supports a specific part
+of the manuscript:
+
+| Block | Manuscript location |
+|-------|----------------------|
+| B1 | Table S4 — AF sensitivity to the reference (centring) value |
+| B2 | Section 4.2 — burden comparison restricted to commonly-converged prefectures (16.3% vs 20.3%) |
+| B3 | Fig. 7a — verification of the annualized attributable-number annotations |
+| C2 | Table 4 "Severe cases only" row (8.14 / 4.97 / 5.04) and the severe-case attributable numbers in Table 5 |
+| C3 | Table S3 — convergence diagnostic (high-WBGT-day counts for Hokkaido, Aomori, Yamaguchi), cited in Section 3.2 |
+
 ### Sensitivity and extension code
 
 - **`R/sensitivity_knots_S5.R`** is complete, runnable code for the
   knot-placement sensitivity analysis reported as **Table S5** (re-estimating
   each period with knots at that period's own WBGT percentiles).
 - **Parts 7 and 8** of the main script are **documented as notes**, not executable
-  blocks. Part 7 records the parameter changes for the other sensitivity analyses
-  reported in the paper (alternative maximum lag; exclusion of 2020; severity and
-  age subgroups), each of which is produced by re-running Parts 4–6 with the
-  stated modification. Part 8 sketches the prefecture-level meta-regression.
+  blocks. Part 7 records the parameter changes for the sensitivity analyses not
+  covered by a dedicated script above (alternative maximum lag; exclusion of
+  2020; age subgroup), each produced by re-running Parts 4–6 with the stated
+  modification. Part 8 sketches the prefecture-level meta-regression (Table 3).
   These can be made fully scripted on request.
 
 ---
