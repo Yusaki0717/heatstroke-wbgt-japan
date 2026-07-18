@@ -127,46 +127,7 @@ for (p in periods) {
       cat(sprintf("  %s: ERROR - %s\n", vname, e$message))
     })
   }
-  
-  # Full model (exploratory; not reported in the manuscript, which presents
-  # univariate results only). Covariates are passed as environment vectors,
-  # same as the univariate block above.
-  tryCatch({
-    lat <- meta_sub$latitude
-    eld <- meta_sub$pct_elderly
-    ldn <- meta_sub$log_density
-    mr_full <- mixmeta(ymat ~ lat + eld + ldn, S = Slist, method = "reml")
-    
-    cf_full <- coef(mr_full)
-    vc_full <- vcov(mr_full)
-    n_out <- ncol(ymat)
-    
-    cat("  Full model (joint test per variable):\n")
-    
-    var_names <- c("latitude", "pct_elderly", "log_density")
-    for (v in seq_along(var_names)) {
-      # v-th predictor (intercept is block 1; predictor v is block v+1)
-      idx_v <- ((v) * n_out + 1):((v + 1) * n_out)
-      
-      if (max(idx_v) <= nrow(vc_full)) {
-        beta_v <- cf_full[v + 1, ]  # row v+1 of coefficient matrix
-        vcov_v <- vc_full[idx_v, idx_v]
-        wald_v <- as.numeric(t(beta_v) %*% solve(vcov_v) %*% beta_v)
-        p_v <- 1 - pchisq(wald_v, df = n_out)
-        cat(sprintf("    %s: Wald chi2(%d) = %.2f, p = %.4f\n",
-                    var_names[v], n_out, wald_v, p_v))
-      }
-    }
-    
-    # Overall model comparison: AIC
-    mr_null <- mixmeta(ymat ~ 1, S = Slist, method = "reml")
-    cat(sprintf("    AIC null: %.1f, AIC full: %.1f\n",
-                AIC(mr_null), AIC(mr_full)))
-    
-  }, error = function(e) {
-    cat(sprintf("  Full model: ERROR - %s\n", e$message))
-  })
-  
+
   cat("\n")
 }
 
