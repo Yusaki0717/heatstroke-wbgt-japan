@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/30113827/README.md)
 # Temporal changes in the WBGT–heat ambulance dispatch association across Japan (2015–2023)
 
 Analysis code for a two-stage distributed lag non-linear model (DLNM) with
@@ -95,14 +94,23 @@ needed only for the choropleth maps (`R/spatial_maps_and_af.R`).
 
 ## How to run
 
-Run the four scripts **in order** from the repository root; each depends on
-objects left in the workspace by the previous one.
+Run the scripts **in order** from the repository root; each depends on
+objects left in the workspace by the previous ones.
 
 ```r
 source("R/heatstroke_dlnm_analysis.R")        # 1. main pipeline (required first)
-source("R/spatial_maps_and_af.R")              # 2. maps + AF/AN (Fig 4, Fig 6, Table 5)
-source("R/revision_sensitivity_analyses.R")    # 3. response-to-reviewers analyses
-source("R/sensitivity_knots_S5.R")             # 4. knot-placement sensitivity (Table S5)
+source("R/spatial_maps_and_af.R")             # 2. maps + AF/AN (Fig 4, Fig 6, Table 5)
+source("R/revision_sensitivity_analyses.R")   # 3. response-to-reviewers analyses
+source("R/sensitivity_knots_S5.R")            # 4. knot-placement sensitivity (Table S5)
+source("R/meta_regression.R")                 # 5. prefecture-level meta-regression (Table 3)
+source("R/sensitivity_table4.R")              # 6. Table 4 sensitivity rows + Fig 5
+source("R/severe_interaction_test.R")         # 7. period × exposure interaction test
+```
+
+or run everything in one go:
+
+```r
+source("run_all.R")   # sources the seven scripts above in order
 ```
 
 Place all data files in `data/` first (see above). Each script creates its own
@@ -119,6 +127,24 @@ Place all data files in `data/` first (see above). Each script creates its own
 > Aomori, and Yamaguchi), matching the range reported in Table S2
 > (−10.2% to −50.6%).
 
+### Built-in self-checks
+
+Every pipeline script verifies its own output against the values reported in
+the manuscript:
+
+- `heatstroke_dlnm_analysis.R` compares `rr_table` against **Table 2**
+  programmatically (all 9 percentile×period cells) and raises a warning on any
+  mismatch.
+- `revision_sensitivity_analyses.R` (block C2) prints the expected severe-case
+  row of **Table 4** (8.14 / 4.97 / 5.04) alongside its output.
+- `meta_regression.R` prints the expected **Table 3** Wald statistics.
+- `sensitivity_table4.R` prints the expected **Table 4** sensitivity rows.
+- `severe_interaction_test.R` prints the expected interaction-test statistics
+  reported in **Section 3.7**.
+
+A successful end-to-end run therefore reproduces every published number; any
+drift between code and manuscript is visible immediately in the console output.
+
 ---
 
 ## Repository contents
@@ -128,16 +154,20 @@ Place all data files in `data/` first (see above). Each script creates its own
 ├── README.md
 ├── LICENSE
 ├── .gitignore
+├── run_all.R                             # one-shot runner for the full pipeline
 ├── R/
-│   ├── heatstroke_dlnm_analysis.R        # 1. full pipeline (Parts 0–8)
+│   ├── heatstroke_dlnm_analysis.R        # 1. full pipeline (Parts 0–6 + notes)
 │   ├── spatial_maps_and_af.R             # 2. maps + attributable fraction/number
 │   ├── revision_sensitivity_analyses.R   # 3. response-to-reviewers analyses
-│   └── sensitivity_knots_S5.R            # 4. knot-placement sensitivity (Table S5)
+│   ├── sensitivity_knots_S5.R            # 4. knot-placement sensitivity (Table S5)
+│   ├── meta_regression.R                 # 5. prefecture-level meta-regression (Table 3)
+│   ├── sensitivity_table4.R              # 6. Table 4 sensitivity rows + Fig 5
+│   └── severe_interaction_test.R         # 7. period × exposure interaction test
 └── data/
     └── README.md                         # placeholder; put downloaded data here
 ```
 
-### What the main script does (Parts 0–8)
+### What the main script does (Parts 0–6)
 
 - **Part 0** — packages and output directories.
 - **Part 1** — load and clean the nine FDMA workbooks; restrict to June–September;
@@ -154,7 +184,12 @@ Place all data files in `data/` first (see above). Each script creates its own
   reduced coefficients, with best linear unbiased predictions per prefecture.
 - **Part 6** — pooled exposure–response and lag–response curves, cumulative
   relative risks at reference percentiles, and the period comparison
-  (`rr_comparison_by_period.csv`, figures).
+  (`rr_comparison_by_period.csv`, figures), followed by the Table 2 self-check.
+
+The script closes with short **notes** pointing to the dedicated scripts that
+implement the sensitivity analyses (lag 0–7, exclusion of 2020, elderly
+subgroup: `sensitivity_table4.R`; severe cases: `revision_sensitivity_analyses.R`
+block C2) and the meta-regression (`meta_regression.R`).
 
 ### What `spatial_maps_and_af.R` does
 
@@ -181,17 +216,25 @@ of the manuscript:
 | C2 | Table 4 "Severe cases only" row (8.14 / 4.97 / 5.04) and the severe-case attributable numbers in Table 5 |
 | C3 | Table S3 — convergence diagnostic (high-WBGT-day counts for Hokkaido, Aomori, Yamaguchi), cited in Section 3.2 |
 
-### Sensitivity and extension code
+### Sensitivity and meta-regression scripts
 
-- **`R/sensitivity_knots_S5.R`** is complete, runnable code for the
-  knot-placement sensitivity analysis reported as **Table S5** (re-estimating
-  each period with knots at that period's own WBGT percentiles).
-- **Parts 7 and 8** of the main script are **documented as notes**, not executable
-  blocks. Part 7 records the parameter changes for the sensitivity analyses not
-  covered by a dedicated script above (alternative maximum lag; exclusion of
-  2020; age subgroup), each produced by re-running Parts 4–6 with the stated
-  modification. Part 8 sketches the prefecture-level meta-regression (Table 3).
-  These can be made fully scripted on request.
+- **`R/sensitivity_knots_S5.R`** — knot-placement sensitivity reported as
+  **Table S5** (re-estimating each period with knots at that period's own WBGT
+  percentiles).
+- **`R/meta_regression.R`** — univariate random-effects meta-regressions of the
+  reduced coefficients on prefecture-level latitude, % population aged ≥65, and
+  log population density, with multivariate Wald tests (**Table 3**). The
+  prefecture covariate table is embedded in the script.
+- **`R/sensitivity_table4.R`** — the three all-severity sensitivity rows of
+  **Table 4** (lag 0–7 days; exclusion of year 2020; elderly ≥65 subgroup),
+  using the same two-stage runner as the main analysis, and assembly of
+  **Fig. 5** from the pipeline CSV outputs.
+- **`R/severe_interaction_test.R`** — formal test of whether the exposure–response
+  association differs across periods: reduced coefficients from all
+  prefecture–period units are stacked into a single multivariate random-effects
+  meta-regression with period as a categorical predictor, and the period
+  coefficients are compared with multivariate Wald tests (overall, and
+  pre→pandemic / pandemic→post contrasts), reported in Sections 2.3.4 and 3.7.
 
 ---
 
