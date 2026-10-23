@@ -54,15 +54,38 @@ read_out <- function(name) read.csv(file.path(OUT_DIR, name), stringsAsFactors =
 # Each script writes output/logs/<name>.log and must end with "STATUS=PASS".
 start_log <- function(name) {
   while (sink.number() > 0) sink()
+  assign(".HSWBGT_GUARD_FAILURES", 0L, envir = globalenv())
   sink(file.path(LOG_DIR, paste0(name, ".log")), split = TRUE)
   cat("START|", name, "|", format(Sys.time(), tz = "Asia/Tokyo"), "\n", sep = "")
   invisible(name)
 }
 end_log <- function(name, status = "PASS") {
+  if (get(".HSWBGT_GUARD_FAILURES", envir = globalenv()) > 0L) status <- "FAIL"
   cat("END|", name, "|", format(Sys.time(), tz = "Asia/Tokyo"),
       "|STATUS=", status, "\n", sep = "")
   while (sink.number() > 0) sink()
   invisible(status)
+}
+
+# Regression guards. The archived manuscript run had certain properties (all 47
+# prefectures estimable, a monotone decline of the pooled RR, a null period x
+# severity interaction, ...). guard() reports whether a rerun has them, as
+# GUARD|<name>|PASS or GUARD|<name>|FAIL|<detail>. A failed guard sets the
+# script status to FAIL and raises a warning but does NOT stop the run: these
+# are checks that data and code match the archived run, not constraints
+# imposed on the data. The authoritative comparison is the value lock in 03.
+.HSWBGT_GUARD_FAILURES <- 0L
+guard <- function(name, ok, detail = "") {
+  ok <- isTRUE(ok)
+  if (ok) {
+    cat("GUARD|", name, "|PASS\n", sep = "")
+  } else {
+    cat("GUARD|", name, "|FAIL|", detail, "\n", sep = "")
+    assign(".HSWBGT_GUARD_FAILURES",
+           get(".HSWBGT_GUARD_FAILURES", envir = globalenv()) + 1L, envir = globalenv())
+    warning(sprintf("Guard failed: %s (%s)", name, detail), call. = FALSE)
+  }
+  invisible(ok)
 }
 
 # ---- 0b. attrdl() by Gasparrini & Leone (2014) ------------------------------
@@ -70,8 +93,23 @@ end_log <- function(name, status = "PASS") {
 # licence is attached to the upstream file). It is fetched once into R/attrdl.R
 # (git-ignored) from the author's repository; place the file there manually if
 # the machine has no internet access.
+#
+# Integrity pin: the manuscript used the version dated 25 January 2017. Its code
+# lines (comments and blank lines removed, trailing whitespace trimmed) have the
+# MD5 below, so a copy with a different header comment still passes while any
+# change to the code is caught. Set options(hswbgt.attrdl_unverified = TRUE) to
+# proceed with a different version deliberately.
 ATTRDL_URL <- paste0("https://raw.githubusercontent.com/gasparrini/",
                      "2014_gasparrini_BMCmrm_Rcodedata/master/attrdl.R")
+ATTRDL_CODE_MD5 <- "16d362a00226da0314b7298912b420dc"
+attrdl_code_md5 <- function(path) {
+  x <- readLines(path, warn = FALSE, encoding = "UTF-8")
+  x <- sub("\\s+$", "", x)
+  x <- x[!grepl("^\\s*#", x) & nzchar(x)]
+  tf <- tempfile(); con <- file(tf, open = "wb"); writeLines(x, con, sep = "\n"); close(con)
+  on.exit(unlink(tf))
+  unname(tools::md5sum(tf))
+}
 load_attrdl <- function(path = file.path("R", "attrdl.R")) {
   if (!file.exists(path)) {
     message("R/attrdl.R not found; downloading from ", ATTRDL_URL)
@@ -83,6 +121,15 @@ load_attrdl <- function(path = file.path("R", "attrdl.R")) {
       stop("Could not download attrdl.R. Download it manually from\n  ", ATTRDL_URL,
            "\nand save it as R/attrdl.R, then rerun.")
     }
+  }
+  md5 <- attrdl_code_md5(path)
+  if (!identical(md5, ATTRDL_CODE_MD5)) {
+    msg <- sprintf(paste0("R/attrdl.R differs from the version used for the manuscript ",
+                          "(code MD5 %s, expected %s)."), md5, ATTRDL_CODE_MD5)
+    if (isTRUE(getOption("hswbgt.attrdl_unverified"))) warning(msg, call. = FALSE)
+    else stop(msg, " Replace the file, or set options(hswbgt.attrdl_unverified = TRUE) to proceed.")
+  } else {
+    cat("ATTRDL|verified|code_md5=", md5, "\n", sep = "")
   }
   source(path, local = globalenv())
   if (!exists("attrdl", mode = "function")) stop("R/attrdl.R did not define attrdl().")

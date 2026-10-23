@@ -48,11 +48,12 @@ NON  <- fit_stage1_grouped("nonsevere_total", 5, label = "nonsevere_lag0_5")
 saveRDS(list(MAIN = MAIN, SEV = SEV, NON = NON),
         file.path(OUT_DIR, "grouped_stage1_main_severity.rds"))
 
-# With the common basis the first stage is estimable for all 47 prefectures in
-# every period (Table 1, convergence row). Stop if that is not reproduced.
-stopifnot(all(vapply(periods, function(p) length(converged_ids(MAIN, p)), integer(1)) == 47L))
-stopifnot(all(vapply(periods, function(p) length(converged_ids(SEV, p)), integer(1)) == 47L))
-stopifnot(all(vapply(periods, function(p) length(converged_ids(NON, p)), integer(1)) == 47L))
+# Regression guards (see 00_setup.R): with the common basis the first stage is
+# estimable for all 47 prefectures in every period (Table 1, convergence row).
+for (ob in list(MAIN, SEV, NON)) {
+  nconv <- vapply(periods, function(p) length(converged_ids(ob, p)), integer(1))
+  guard(paste0("all_47_estimable_", ob$label), all(nconv == 47L), paste(nconv, collapse = "/"))
+}
 
 cat("\n=== TABLE 2 ===\n")
 t2 <- list(); pools_main <- list()
@@ -156,7 +157,7 @@ int_w <- wald_block(ci, Vi, ii)
 int_out <- data.frame(estimator = "fixed", chi2 = int_w["chi2"],
                       df = int_w["df"], p = int_w["p"])
 print(int_out); write_csv(int_out, "severity_interaction_fixed.csv")
-stopifnot(int_out$p > 0.05)
+guard("period_x_severity_interaction_null", int_out$p > 0.05, sprintf("P = %.3f", int_out$p))
 
 cat("\n=== FIXED-EFFECTS SEVERE-ONLY PERIOD TESTS ===\n")
 ys <- Y[M$sev == "severe", , drop = FALSE]
@@ -351,9 +352,10 @@ tokyo <- do.call(rbind, lapply(periods, function(p) {
 }))
 print(tokyo); write_csv(tokyo, "tokyo_cumulative_p95_grouped.csv")
 
-stopifnot(main_rr["pre_pandemic"] > main_rr["pandemic"],
-          main_rr["pandemic"] > main_rr["post_pandemic"],
-          abs(Q_REPORT[["P95"]] - 31.9) < 0.05)
+guard("pooled_rr_declines_monotonically",
+      main_rr["pre_pandemic"] > main_rr["pandemic"] && main_rr["pandemic"] > main_rr["post_pandemic"],
+      paste(sprintf("%.3f", main_rr), collapse = " / "))
+guard("p95_read_point_is_31.9C", abs(Q_REPORT[["P95"]] - 31.9) < 0.05, sprintf("%.3f", Q_REPORT[["P95"]]))
 
 writeLines(capture.output(sessionInfo()), file.path(OUT_DIR, "sessionInfo.txt"))
 end_log("01_core_reanalysis")

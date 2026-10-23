@@ -124,7 +124,8 @@ its natural logarithm.
 
 The archived manuscript run used R 4.5.3 with dlnm 2.4.10, mixmeta 1.2.2,
 gnm 1.1-5, dplyr 1.2.0 and tsModel 0.6-2 (manuscript Section 2.3.6);
-`output/sessionInfo.txt` records the versions of any rerun.
+dlnm 2.4.10 requires **R ≥ 4.4**. `output/sessionInfo.txt` records the
+versions of any rerun.
 
 ```r
 install.packages(c(
@@ -141,10 +142,12 @@ install.packages("rnaturalearthhires", repos = "https://ropensci.r-universe.dev"
 `attrdl()` function of Gasparrini & Leone (2014), which is not part of the
 dlnm package. The upstream file carries no licence, so it is not redistributed
 here: `R/00_setup.R` downloads it once into `R/attrdl.R` (git-ignored) from
-https://github.com/gasparrini/2014_gasparrini_BMCmrm_Rcodedata. On a machine
-without internet access, download that file manually and save it as
-`R/attrdl.R`. The function calls `tsModel::Lag()`, hence the tsModel
-dependency.
+https://github.com/gasparrini/2014_gasparrini_BMCmrm_Rcodedata and verifies
+that its code matches the version used for the manuscript (25 January 2017;
+MD5 of the code lines `16d362a00226da0314b7298912b420dc`), stopping
+otherwise. On a machine without internet access, download that file manually
+and save it as `R/attrdl.R`. The function calls `tsModel::Lag()`, hence the
+tsModel dependency.
 
 ---
 
@@ -179,6 +182,15 @@ self-check values of the July 2026 scripts. As the Response to Reviewers
 notes, such checks establish that a rerun reproduces the archived values, not
 that the specification is correct.
 
+Properties of the archived run that the manuscript relies on (all 47
+prefectures estimable in every period, a monotone decline of the pooled RR,
+a null period × severity interaction, every prefecture declining from the
+pre- to the post-pandemic period) are reported as `GUARD|<name>|PASS` or
+`GUARD|<name>|FAIL|<detail>` lines. A failed guard sets that script's status
+to `FAIL` and raises a warning but does not stop the run. These are
+regression guards for the archived run, not constraints imposed on the data:
+a rerun on different data is expected to proceed and to report them.
+
 ---
 
 ## Verification
@@ -188,7 +200,9 @@ The pipeline was re-executed from this repository layout on the study data
 used in the manuscript) on Linux with R 4.3.3, dlnm 2.4.10, mixmeta 1.2.2,
 gnm 1.1-5 and dplyr 1.1.4, and compared with the archived outputs in
 `results/` (Windows, R 4.5.3, dlnm 2.4.10, mixmeta 1.2.2, gnm 1.1-5,
-dplyr 1.2.0):
+dplyr 1.2.0). dlnm 2.4.10 declares R ≥ 4.4; for this check it was installed
+on R 4.3.3 with that declaration relaxed, which affects none of its code.
+Results:
 
 - The analysis data set built by `R/00_setup.R` is identical, column by
   column, to the data object of the archived run.

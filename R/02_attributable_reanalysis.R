@@ -135,6 +135,7 @@ summary_change <- data.frame(
 write_csv(summary_change, "attributable_pre_post_change.csv")
 print(summary_change)
 
-stopifnot(nrow(ALL$detail) == 141L, nrow(SEV$detail) == 141L,
-          all(is.finite(res$an)), all(is.finite(res$af)))
+guard("attributable_fits_all_47x3_all_severity", nrow(ALL$detail) == 141L, nrow(ALL$detail))
+guard("attributable_fits_all_47x3_severe", nrow(SEV$detail) == 141L, nrow(SEV$detail))
+stopifnot(all(is.finite(res$an)), all(is.finite(res$af)))
 end_log("02_attributable_reanalysis")

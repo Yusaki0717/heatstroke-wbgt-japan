@@ -142,8 +142,11 @@ for (j in seq_len(nrow(af_main))) {
 lock <- do.call(rbind, lock); rownames(lock) <- NULL
 write_csv(lock, "MANUSCRIPT_VALUE_LOCK.csv")
 
-stopifnot(nrow(lock) > 50, change_extremes$n_declined == 47,
-          all(sev_declines$decline_pct > 0))
+stopifnot(nrow(lock) > 50)
+guard("all_47_prefectures_declined_pre_to_post", change_extremes$n_declined == 47,
+      change_extremes$n_declined)
+guard("severe_and_nonsevere_declined", all(sev_declines$decline_pct > 0),
+      paste(sprintf("%.1f%%", sev_declines$decline_pct), collapse = " / "))
 
 # ---- Comparison with the archived lock of the manuscript run -----------------
 cat("\n=== LOCK CHECK AGAINST results/MANUSCRIPT_VALUE_LOCK.csv ===\n")
