@@ -17,10 +17,10 @@ Manuscript hp-2026-00307n, revision 2 (under review).
 > Scripts `01`–`04` are the archived scripts of the manuscript run of
 > 25 August 2026 with file paths adapted to this layout; `00` and `05` were
 > prepared for the public release (see [Provenance](#provenance)). The
-> pipeline has **not yet been re-executed from this repository layout**. Before
-> the release is tagged and archived with a DOI, the archived machine-readable
-> outputs will be placed in `results/` and the lock check in script `03` will
-> confirm that a rerun reproduces them.
+> archived machine-readable outputs of that run are in `results/`, and a
+> rerun of this repository on the study data reproduces them (see
+> [Verification](#verification)). A DOI-archived release will follow
+> acceptance.
 
 ---
 
@@ -181,6 +181,37 @@ that the specification is correct.
 
 ---
 
+## Verification
+
+The pipeline was re-executed from this repository layout on the study data
+(nine FDMA workbooks downloaded from the FDMA site; daily WBGTmax series as
+used in the manuscript) on Linux with R 4.3.3, dlnm 2.4.10, mixmeta 1.2.2,
+gnm 1.1-5 and dplyr 1.1.4, and compared with the archived outputs in
+`results/` (Windows, R 4.5.3, dlnm 2.4.10, mixmeta 1.2.2, gnm 1.1-5,
+dplyr 1.2.0):
+
+- The analysis data set built by `R/00_setup.R` is identical, column by
+  column, to the data object of the archived run.
+- `MANUSCRIPT_VALUE_LOCK.csv`: all 66 keys identical (`LOCK_CHECK|PASS`).
+- 27 of the 28 result tables are identical to a relative tolerance of
+  10⁻⁶ (largest difference 1.6 × 10⁻⁷, in the REML meta-regression fits).
+- The one exception is the Monte Carlo confidence intervals in
+  `attributable_summary_grouped.csv`: the 12 interval bounds differ by at
+  most 0.14 % (the point estimates are identical). `attrdl()` draws the
+  coefficient samples through `eigen()`, whose eigenvector signs are
+  platform dependent, so the same seed yields a different sample. At the
+  precision reported in Table 5 two bounds move by 0.1 percentage point
+  (pandemic 64.5 → 64.6 %, post-pandemic 64.4 → 64.5 % and 66.6 → 66.7 %).
+  The manuscript reports the intervals of the archived run.
+- `R/05_supplementary_descriptives.R` reproduces Table 1, Table S3 and the
+  Figure S1 annotations exactly, and its 33 °C analysis reproduces the
+  archived `alert_burden_summary_grouped.csv` (0.60 / 0.68 / 0.73 % of
+  prefecture-days at or above 33 °C carrying 7.2 / 8.2 / 5.3 % of the
+  heat-attributable dispatches; 6.9 % overall).
+- All five scripts end in `STATUS=PASS`; the full run takes about 2–3 minutes.
+
+---
+
 ## Scripts and the manuscript elements they produce
 
 | Script | Manuscript elements | Main outputs (`output/`) |
@@ -190,7 +221,7 @@ that the specification is correct.
 | `R/02_attributable_reanalysis.R` | Table 5 with Monte Carlo CIs; Table S4; Section 3.8 (18.1 % vs 26.1 %) | `attributable_summary_grouped.csv`, `attributable_prefecture_*.csv`, `attributable_pre_post_change.csv` |
 | `R/03_lock_manuscript_values.R` | Section 3.6 latitude gradient with and without support at 31.9 °C; declines and extremes quoted in Sections 3.5, 3.7 and 3.8; the value lock | `MANUSCRIPT_VALUE_LOCK.csv`, `latitude_support_grouped.csv`, `*_declines_grouped.csv`, `blup_*extremes*.csv` |
 | `R/04_generate_grouped_figures.R` | Figures 1–7 and the TOC graphic | `figures/Figure*_grouped.*`, `figures/TOC_grouped.*` |
-| `R/05_supplementary_descriptives.R` | Table 1 (incl. convergence row and strata counts); Table S3; Figure S1; the 33 °C alert-threshold proxy and Heatstroke Alert coverage counts (Section 2.3.6; Response to Reviewers, Comment 7); share of heat-attributable dispatches on days ≥ 33 °C | `table1_descriptives.csv`, `tableS3_days_above_30.csv`, `alert_*.csv`, `attributable_share_ge33.csv`, `figures/FigureS1_grouped.*` |
+| `R/05_supplementary_descriptives.R` | Table 1 (incl. convergence row and strata counts); Table S3; Figure S1; the 33 °C alert-threshold proxy and Heatstroke Alert coverage counts (Section 2.3.6; Response to Reviewers, Comment 7); share of heat-attributable dispatches on days ≥ 33 °C (reproduces the archived `results/alert_burden_summary_grouped.csv`) | `table1_descriptives.csv`, `tableS3_days_above_30.csv`, `alert_*.csv`, `attributable_share_ge33.csv`, `figures/FigureS1_grouped.*` |
 
 Two definitions that the manuscript states only in words are fixed in code:
 the "high-WBGT days" of the within-season depletion analysis are days with
@@ -233,7 +264,7 @@ Gunma, Saitama, Chiba, Tokyo, Kanagawa, Yamanashi and Nagano (`R/05`).
 - `R/05_supplementary_descriptives.R` was written for the public release so
   that the descriptive items of the manuscript can be reproduced from the same
   data objects. Its outputs can be checked against the manuscript directly.
-- `results/` is reserved for the archived outputs of the manuscript run (see
+- `results/` holds the archived outputs of the manuscript run (see
   `results/README.md`).
 
 ---

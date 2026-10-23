@@ -141,9 +141,14 @@ for (p in periods) for (i in prefectures) {
   an_day <- attrdl(lagmat, cb, d$total, mo, type = "an", tot = FALSE,
                    cen = wbgt_cen, range = c(wbgt_cen, max(d$wbgt_max)))
   ok <- !is.na(an_day)
+  # Day-level AN is undefined on the first lag days of each summer (NA). As in
+  # attrdl(tot = TRUE), rescale each prefecture's sum to its full dispatch
+  # denominator so that the totals equal those of 02_attributable_reanalysis.R.
+  scale <- sum(d$total) / sum(d$total[ok])
   share_rows[[length(share_rows) + 1]] <- data.frame(
     period = p, pref_code = i,
-    an_total = sum(an_day[ok]), an_ge_33 = sum(an_day[ok & d$wbgt_max >= THR]),
+    an_total = sum(an_day[ok]) * scale,
+    an_ge_33 = sum(an_day[ok & d$wbgt_max >= THR]) * scale,
     days = sum(ok), days_ge_33 = sum(ok & d$wbgt_max >= THR))
 }
 share <- do.call(rbind, share_rows)
@@ -155,6 +160,11 @@ share_summary <- bind_rows(
     mutate(period = "total")) %>%
   mutate(pct_days_ge_33 = 100 * days_ge_33 / days,
          pct_attributable_on_ge_33 = 100 * an_ge_33 / an_total)
+# The national totals must equal the attributable numbers of script 02.
+af02 <- read_out("attributable_summary_grouped.csv")
+af02 <- af02[af02$outcome == "all_severity" & af02$reference == "P50", ]
+stopifnot(isTRUE(all.equal(share_summary$an_total[match(af02$period, share_summary$period)],
+                           af02$an, tolerance = 1e-8)))
 print(as.data.frame(share_summary))
 write_csv(share_summary, "attributable_share_ge33.csv")
 stopifnot(nrow(share) == 141L)
