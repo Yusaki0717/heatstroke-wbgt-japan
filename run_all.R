@@ -1,74 +1,73 @@
 # =============================================================================
-# run_all.R — full pipeline for hp-2026-00307n
+# run_all.R -- run the complete corrected pipeline for hp-2026-00307n
 #
-# Runs every analysis script in dependency order.
-# Prerequisite: the data files must already be in data/ (see README.md).
+# Order (each script sources R/00_setup.R itself):
+#   R/01_core_reanalysis.R          first stage, meta-analysis, Tables 2-4, S1, S2, S5
+#   R/02_attributable_reanalysis.R  attributable numbers / fractions, Table 5, S4
+#   R/03_lock_manuscript_values.R   MANUSCRIPT_VALUE_LOCK.csv (+ check against results/)
+#   R/04_generate_grouped_figures.R Figures 1-7, TOC graphic
+#   R/05_supplementary_descriptives.R Table 1, Table S3, Figure S1, 33 C proxy
 #
-# Usage: source this file from anywhere —
-#
-#   source("run_all.R")                    # if it is in your working directory
-#   source("C:/path/to/repo/run_all.R")    # full path works too
-#
-# The script locates its own folder and switches the working directory there,
-# so relative paths in the analysis scripts (data/, output/, R/) always resolve
-# against the repository root, no matter where the R session was started.
-#
-# Watch for the self-check lines in the console output (see README,
-# "Built-in self-checks"); the main script warns if Table 2 is not reproduced.
+# Prerequisites: data files in data/ (see README.md). Run from anywhere:
+#   source("run_all.R")      or      Rscript run_all.R
+# The script switches to its own folder, so relative paths always resolve
+# against the repository root. Every script stops on its first error and
+# writes output/logs/<script>.log ending in STATUS=PASS.
 # =============================================================================
 
-# --- 0. Locate this script's own directory ------------------------------------
-.this_file <- tryCatch(
-  normalizePath(sys.frame(1)$ofile, mustWork = FALSE),
-  error = function(e) NULL
-)
-if (is.null(.this_file) &&
-    requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
-  .this_file <- rstudioapi::getActiveDocumentContext()$path
+.locate_root <- function() {
+  f <- NULL
+  m <- grep("^--file=", commandArgs(trailingOnly = FALSE), value = TRUE)
+  if (length(m)) f <- sub("^--file=", "", m[1])
+  if (is.null(f)) {
+    f <- tryCatch(normalizePath(sys.frame(1)$ofile, mustWork = FALSE), error = function(e) NULL)
+  }
+  if ((is.null(f) || !nzchar(f)) &&
+      requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+    f <- rstudioapi::getActiveDocumentContext()$path
+  }
+  if (is.null(f) || !nzchar(f)) getwd() else dirname(normalizePath(f))
 }
-if (is.null(.this_file) || !nzchar(.this_file)) {
-  .script_dir <- getwd()
-} else {
-  .script_dir <- dirname(normalizePath(.this_file))
-}
-setwd(.script_dir)
+setwd(.locate_root())
 cat("Pipeline root:", getwd(), "\n")
 
-# --- 1. Resolve script locations (R/ subfolder preferred, flat layout ok) -----
-script_names <- c(
-  "heatstroke_dlnm_analysis.R",       # 1. main pipeline (required first)
-  "spatial_maps_and_af.R",            # 2. maps + AF/AN (Fig 4, Fig 6, Table 5)
-  "revision_sensitivity_analyses.R",  # 3. response-to-reviewers analyses
-  "sensitivity_knots_S5.R",           # 4. knot-placement sensitivity (Table S5)
-  "meta_regression.R",                # 5. prefecture-level meta-regression (Table 3)
-  "sensitivity_table4.R",             # 6. Table 4 sensitivity rows + Fig 5
-  "severe_interaction_test.R"         # 7. period x exposure interaction test
+scripts <- c(
+  "R/01_core_reanalysis.R",
+  "R/02_attributable_reanalysis.R",
+  "R/03_lock_manuscript_values.R",
+  "R/04_generate_grouped_figures.R",
+  "R/05_supplementary_descriptives.R"
 )
-
-resolve_script <- function(f) {
-  cand <- c(file.path("R", f), f)
-  hit <- cand[file.exists(cand)]
-  if (length(hit) == 0) return(NA_character_)
-  normalizePath(hit[1])
-}
-scripts <- vapply(script_names, resolve_script, character(1))
-
-if (any(is.na(scripts))) {
-  cat("\nThe following scripts were NOT found under", getwd(), "\n")
-  cat(paste0("  - ", script_names[is.na(scripts)], collapse = "\n"), "\n")
-  cat("(looked in both ./R/ and ./). Check that run_all.R sits in the\n")
-  cat("repository root together with the R/ folder, then try again.\n")
-  stop("Missing analysis scripts; aborting before any computation.")
+missing <- scripts[!file.exists(scripts)]
+if (length(missing)) {
+  stop("Missing analysis scripts (is run_all.R in the repository root?):\n  ",
+       paste(missing, collapse = "\n  "))
 }
 
-# --- 2. Run in order -----------------------------------------------------------
+t_start <- Sys.time()
 for (s in scripts) {
-  cat("\n", strrep("=", 76), "\n", sep = "")
-  cat("RUNNING:", s, "\n")
-  cat(strrep("=", 76), "\n\n", sep = "")
-  source(s, encoding = "UTF-8")
+  cat("\n", strrep("=", 76), "\nRUNNING: ", s, "\n", strrep("=", 76), "\n\n", sep = "")
+  tryCatch(
+    source(s, encoding = "UTF-8"),
+    error = function(e) {
+      while (sink.number() > 0) sink()
+      stop(sprintf("Pipeline stopped in %s:\n  %s", s, conditionMessage(e)), call. = FALSE)
+    }
+  )
 }
 
+# ---- Summary of per-script status lines ------------------------------------
+logs <- file.path("output", "logs", paste0(sub("^R/|\\.R$", "", scripts), ".log"))
+status <- vapply(logs, function(f) {
+  if (!file.exists(f)) return("NO LOG")
+  x <- readLines(f, warn = FALSE)
+  st <- grep("^END\\|", x, value = TRUE)
+  if (length(st)) sub(".*STATUS=", "", st[length(st)]) else "INCOMPLETE"
+}, character(1))
 cat("\n", strrep("=", 76), "\n", sep = "")
-cat("ALL SCRIPTS COMPLETE. Check the self-check lines above before trusting\n")
-cat("any downstream use of the outputs.\n")
+print(data.frame(log = basename(logs), status = unname(status)), row.names = FALSE)
+cat(sprintf("Elapsed: %.1f min\n", as.numeric(difftime(Sys.time(), t_start, units = "mins"))))
+if (!all(status == "PASS")) {
+  stop("One or more scripts did not finish with STATUS=PASS; see output/logs/.")
+}
+cat("ALL SCRIPTS COMPLETE. Outputs are in output/ (tables, logs) and output/figures/.\n")
