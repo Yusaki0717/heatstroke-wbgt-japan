@@ -57,7 +57,7 @@ for (s in scripts) {
 }
 
 # ---- Summary of per-script status lines ------------------------------------
-logs <- file.path("output", "logs", paste0(sub("^R/|\\.R$", "", scripts), ".log"))
+logs <- file.path("output", "logs", paste0(sub("\\.R$", "", basename(scripts)), ".log"))
 status <- vapply(logs, function(f) {
   if (!file.exists(f)) return("NO LOG")
   x <- readLines(f, warn = FALSE)
