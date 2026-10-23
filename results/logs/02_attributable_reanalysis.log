@@ -1,0 +1,44 @@
+START|2026-08-25 17:31:53
+AF_FIT|total|pre_pandemic|prefectures=47
+AF_FIT|total|pandemic|prefectures=47
+AF_FIT|total|post_pandemic|prefectures=47
+AF_FIT|severe_total|pre_pandemic|prefectures=47
+AF_FIT|severe_total|pandemic|prefectures=47
+AF_FIT|severe_total|post_pandemic|prefectures=47
+        outcome        period reference reference_wbgt total_ead         an
+1  all_severity  pre_pandemic       P10           22.3    309725 284302.009
+2  all_severity  pre_pandemic       P25           24.7    309725 267578.983
+3  all_severity  pre_pandemic       P50           27.5    309725 217839.942
+4  all_severity  pre_pandemic       P75           30.1    309725 103784.362
+5  all_severity      pandemic       P10           22.3    111120  98320.335
+6  all_severity      pandemic       P25           24.7    111120  92826.323
+7  all_severity      pandemic       P50           27.5    111120  73042.513
+8  all_severity      pandemic       P75           30.1    111120  31599.647
+9  all_severity post_pandemic       P10           22.3    156173 145825.643
+10 all_severity post_pandemic       P25           24.7    156173 135032.281
+11 all_severity post_pandemic       P50           27.5    156173 102945.115
+12 all_severity post_pandemic       P75           30.1    156173  40836.402
+13       severe  pre_pandemic       P50           27.5      7556   6035.838
+14       severe      pandemic       P50           27.5      3089   2284.801
+15       severe post_pandemic       P50           27.5      3602   2768.751
+         af summers an_annual ead_annual     an_lo     an_hi    af_lo    af_hi
+1  91.79175       5 56860.402    61945.0        NA        NA       NA       NA
+2  86.39244       5 53515.797    61945.0        NA        NA       NA       NA
+3  70.33334       5 43567.988    61945.0 216075.68 219014.52 69.76372 70.71257
+4  33.50855       5 20756.872    61945.0        NA        NA       NA       NA
+5  88.48122       2 49160.168    55560.0        NA        NA       NA       NA
+6  83.53701       2 46413.161    55560.0        NA        NA       NA       NA
+7  65.73300       2 36521.257    55560.0  71683.22  73684.54 64.50974 66.31078
+8  28.43741       2 15799.823    55560.0        NA        NA       NA       NA
+9  93.37443       2 72912.821    78086.5        NA        NA       NA       NA
+10 86.46327       2 67516.140    78086.5        NA        NA       NA       NA
+11 65.91736       2 51472.557    78086.5 100567.33 104065.45 64.39483 66.63473
+12 26.14818       2 20418.201    78086.5        NA        NA       NA       NA
+13 79.88139       5  1207.168     1511.2        NA        NA       NA       NA
+14 73.96572       2  1142.401     1544.5        NA        NA       NA       NA
+15 76.86706       2  1384.376     1801.0        NA        NA       NA       NA
+                          metric     value
+1           annualized_total_ead 26.057793
+2 annualized_attributable_number 18.143066
+3           AF_percentage_points -4.415984
+END|2026-08-25 17:32:00|STATUS=PASS

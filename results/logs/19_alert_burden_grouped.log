@@ -1,0 +1,12 @@
+START|2026-08-25 19:28:15
+         period observed_days alert_days alert_day_pct total_ead
+1      pandemic         11468         78     0.6801535    111120
+2 post_pandemic         11468         84     0.7324730    156173
+3  pre_pandemic         28666        172     0.6000140    309725
+4   all_periods         51602        334     0.6472617    577018
+  attributable_total attributable_alert_days alert_burden_pct
+1           73042.51                5960.438         8.160231
+2          102945.11                5416.264         5.261312
+3          217839.94               15680.464         7.198158
+4          393827.57               27057.166         6.870308
+END|2026-08-25 19:28:17|STATUS=PASS

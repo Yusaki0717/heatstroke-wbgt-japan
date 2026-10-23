@@ -1,0 +1,162 @@
+START|2026-08-25 17:29:24
+WBGT|median=27.500000000|P75=30.100000000|P90=31.400000000|P95=31.900000000|range=11.100000000,35.200000000
+
+=== MAIN AND SEVERITY FIRST STAGE ===
+FIT|main_lag0_5|pre_pandemic|converged=47
+FIT|main_lag0_5|pandemic|converged=47
+FIT|main_lag0_5|post_pandemic|converged=47
+FIT|severe_lag0_5|pre_pandemic|converged=47
+FIT|severe_lag0_5|pandemic|converged=47
+FIT|severe_lag0_5|post_pandemic|converged=47
+FIT|nonsevere_lag0_5|pre_pandemic|converged=47
+FIT|nonsevere_lag0_5|pandemic|converged=47
+FIT|nonsevere_lag0_5|post_pandemic|converged=47
+
+=== TABLE 2 ===
+TABLE2|P75|pre_pandemic|rr=3.864010053|lo=3.690031538|hi=4.046191351
+TABLE2|P75|pandemic|rr=3.693200830|lo=3.464098968|hi=3.937454587
+TABLE2|P75|post_pandemic|rr=3.013114239|lo=2.812832299|hi=3.227656842
+TABLE2|P90|pre_pandemic|rr=7.944060393|lo=7.465544423|hi=8.453247606
+TABLE2|P90|pandemic|rr=7.020346005|lo=6.544915182|hi=7.530312717
+TABLE2|P90|post_pandemic|rr=4.971527788|lo=4.619823860|hi=5.350006688
+TABLE2|P95|pre_pandemic|rr=10.447390149|lo=9.689755806|hi=11.264263322
+TABLE2|P95|pandemic|rr=8.783573302|lo=8.166979361|hi=9.446719104
+TABLE2|P95|post_pandemic|rr=5.896827351|lo=5.440736910|hi=6.391151307
+
+=== INDEPENDENT PERIOD CONTRASTS ===
+PAIR|pandemic vs pre_pandemic|ratio=0.840743303|lo=0.757158174|hi=0.933555663|decline=15.925670|p=0.0011665966522
+PAIR|post_pandemic vs pre_pandemic|ratio=0.564430663|lo=0.505526585|hi=0.630198259|decline=43.556934|p=2.67608408444e-24
+PAIR|post_pandemic vs pandemic|ratio=0.671347201|lo=0.602303189|hi=0.748305957|decline=32.865280|p=6.17975752318e-13
+EXCESS_RISK_DECLINE|48.167406301
+
+=== HETEROGENEITY ===
+         period        Q  df            p       I2 tau2_trace
+1  pre_pandemic 580.6693 138 0.000000e+00 76.23432   14.95529
+2      pandemic 358.8659 138 0.000000e+00 61.54552   72.47375
+3 post_pandemic 322.6953 138 1.110223e-16 57.23520   55.51097
+
+=== STACKED PERIOD MODERATOR ===
+          contrast  log_ratio         se     ratio        lo        hi
+1  pandemic vs pre -0.1599113 0.03283318 0.8522194 0.7991039 0.9088654
+2      post vs pre -0.4987838 0.03188796 0.6072687 0.5704760 0.6464345
+3 post vs pandemic -0.3388725 0.03895228 0.7125733 0.6601957 0.7691063
+  decline_pct      chi2 df            p joint_chi2 joint_df     joint_p
+1    14.77806  43.37427  3 2.049469e-09   264.4069        6 3.41039e-54
+2    39.27313 252.99486  3 1.472535e-54   264.4069        6 3.41039e-54
+3    28.74267  75.98500  3 2.228320e-16   264.4069        6 3.41039e-54
+
+=== SEVERITY POOLED RESULTS ===
+      outcome        period n_pref        rr        lo        hi
+rr     severe  pre_pandemic     47 21.376991 17.656421 25.881562
+rr1    severe      pandemic     47 16.218164 11.204169 23.475978
+rr2    severe post_pandemic     47 12.198275  8.769147 16.968346
+rr3 nonsevere  pre_pandemic     47 10.208447  9.490028 10.981251
+rr4 nonsevere      pandemic     47  8.583896  7.992805  9.218699
+rr5 nonsevere post_pandemic     47  5.785171  5.349298  6.256559
+
+=== FIXED-EFFECTS PERIOD BY SEVERITY INTERACTION ===
+     estimator     chi2 df         p
+chi2     fixed 3.182935  6 0.7855611
+
+=== FIXED-EFFECTS SEVERE-ONLY PERIOD TESTS ===
+              test      chi2 df           p
+1          overall 16.389983  6 0.011807000
+2  pandemic vs pre  5.589525  3 0.133381017
+3      post vs pre 13.830835  3 0.003144697
+4 post vs pandemic  2.068900  3 0.558230058
+
+=== META-REGRESSION ===
+             period          variable       chi2 df            p pct_explained
+chi2   pre_pandemic          latitude 69.7252132  3 4.887617e-15     69.859863
+chi21  pre_pandemic elderly_prop_2020  1.2014380  3 7.526594e-01      0.000000
+chi22  pre_pandemic   log_pop_density  4.2008772  3 2.405741e-01      4.768741
+chi23      pandemic          latitude 50.2274453  3 7.145974e-11     12.977427
+chi24      pandemic elderly_prop_2020  0.6941155  3 8.745872e-01      0.000000
+chi25      pandemic   log_pop_density  2.6503774  3 4.487261e-01      0.000000
+chi26 post_pandemic          latitude  5.9686936  3 1.131433e-01      3.275534
+chi27 post_pandemic elderly_prop_2020 19.7853236  3 1.880483e-04      9.287032
+chi28 post_pandemic   log_pop_density 12.4661281  3 5.945613e-03      0.000000
+              p_bh
+chi2  4.398856e-14
+chi21 8.467419e-01
+chi22 3.608611e-01
+chi23 3.215688e-10
+chi24 8.745872e-01
+chi25 5.769336e-01
+chi26 2.036580e-01
+chi27 5.641450e-04
+chi28 1.337763e-02
+
+=== BLUP PREFECTURE RESULTS ===
+BLUP|pre_range=7.020368376,15.451887820|post_range=4.036998755,7.933963343|change=-61.877914515,-16.052682858|declined=47
+
+=== SUPPORT AND STATION-EXCLUSION SENSITIVITY ===
+
+=== TABLE 4 AND PERIOD-SPECIFIC KNOTS ===
+FIT|lag0_7|pre_pandemic|converged=47
+FIT|lag0_7|pandemic|converged=47
+FIT|lag0_7|post_pandemic|converged=47
+FIT|exclude_2020|pre_pandemic|converged=47
+FIT|exclude_2020|pandemic|converged=47
+FIT|exclude_2020|post_pandemic|converged=47
+FIT|elderly|pre_pandemic|converged=47
+FIT|elderly|pandemic|converged=47
+FIT|elderly|post_pandemic|converged=47
+FIT|period_specific_knots|pre_pandemic|converged=47
+FIT|period_specific_knots|pandemic|converged=47
+FIT|period_specific_knots|post_pandemic|converged=47
+
+=== WITHIN-SEASON DEPLETION ===
+FIT|plus_cumheat|pre_pandemic|converged=47
+FIT|plus_cumheat|pandemic|converged=47
+FIT|plus_cumheat|post_pandemic|converged=47
+FIT|plus_cumhot|pre_pandemic|converged=47
+FIT|plus_cumhot|pandemic|converged=47
+FIT|plus_cumhot|post_pandemic|converged=47
+FIT|early_summer|pre_pandemic|converged=47
+FIT|early_summer|pandemic|converged=47
+FIT|early_summer|post_pandemic|converged=47
+FIT|late_summer|pre_pandemic|converged=47
+FIT|late_summer|pandemic|converged=47
+FIT|late_summer|post_pandemic|converged=47
+                        model        contrast  log_ratio         se     ratio
+1                  unadjusted pandemic vs pre -0.1599113 0.03283318 0.8522194
+2                  unadjusted     post vs pre -0.4987838 0.03188796 0.6072687
+3           + cumulative heat pandemic vs pre -0.1365043 0.03347547 0.8724026
+4           + cumulative heat     post vs pre -0.4619632 0.03140429 0.6300455
+5  + cumulative hot-day count pandemic vs pre -0.1259912 0.03321438 0.8816226
+6  + cumulative hot-day count     post vs pre -0.4776321 0.03175121 0.6202503
+7                early summer pandemic vs pre -0.1829785 0.10317887 0.8327860
+8                early summer     post vs pre -0.5511437 0.04513150 0.5762904
+9                 late summer pandemic vs pre -0.3647206 0.04848243 0.6943906
+10                late summer     post vs pre -0.5513253 0.06031261 0.5761857
+          lo        hi decline_pct      chi2 df            p
+1  0.7991039 0.9088654    14.77806  43.37427  3 2.049469e-09
+2  0.5704760 0.6464345    39.27313 252.99486  3 1.472535e-54
+3  0.8170000 0.9315621    12.75974  43.37832  3 2.045410e-09
+4  0.5924341 0.6700447    36.99545 225.69922  3 1.176666e-48
+5  0.8260571 0.9409257    11.83774  32.48634  3 4.133045e-07
+6  0.5828272 0.6600764    37.97497 233.09058  3 2.968777e-50
+7  0.6803084 1.0194386    16.72140  31.77755  3 5.829964e-07
+8  0.5275026 0.6295903    42.37096 179.98744  3 8.875201e-39
+9  0.6314439 0.7636123    30.56094  65.58479  3 3.760652e-14
+10 0.5119450 0.6484875    42.38143 106.26789  3 6.972561e-23
+
+=== POOLED NATIONAL DEATH CHECK ===
+       outcome        period events        rr        lo        hi
+1  death_total  pre_pandemic    483 44.771065 33.826355 59.256998
+2  death_total      pandemic    192 49.131103 28.997126 83.244983
+3  death_total post_pandemic    182 28.081673 17.630841 44.727323
+4 severe_total  pre_pandemic   7556 20.743346 18.464010 23.304060
+5 severe_total      pandemic   3089 17.080188 13.834690 21.087052
+6 severe_total post_pandemic   3602 15.779765 12.976808 19.188153
+7        total  pre_pandemic 309725 10.065946  9.765628 10.375500
+8        total      pandemic 111120  8.390207  7.969906  8.832674
+9        total post_pandemic 156173  6.270844  5.966931  6.590235
+
+=== TOKYO CUMULATIVE RR FOR FIGURE 2 CAPTION ===
+         period        rr       lo        hi
+1  pre_pandemic 11.200553 9.222744 13.602502
+2      pandemic  7.579744 5.510006 10.426943
+3 post_pandemic  5.114527 3.595341  7.275636
+END|2026-08-25 17:29:43|STATUS=PASS
