@@ -9,7 +9,7 @@ See the top-level `README.md` for the full file list and column specifications.
 
 **FDMA heat-related ambulance transport data**, nine annual workbooks
 `heatstroke003_data_h27.xlsx` (2015) … `heatstroke003_data_r5.xlsx` (2023),
-one worksheet per month (e.g. `2017_06`).
+one worksheet per month (e.g. `2017_06`); 14 columns in 2015–2016, 22 from 2017.
 Source: https://www.fdma.go.jp/disaster/heatstroke/post3.html
 
 **Ministry of the Environment WBGT data**, saved as a single CSV

@@ -118,7 +118,10 @@ if (!exists(".HSWBGT_DATA_LOADED", envir = globalenv()) ||
          paste(file_map$file[!file.exists(file_map$file)], collapse = "\n  "))
   }
 
-  # Column order of the FDMA monthly sheets (one sheet per month, e.g. "2017_06")
+  # Column order of the FDMA monthly sheets (one sheet per month, e.g. "2017_06").
+  # The 2015 and 2016 workbooks carry 14 named columns (date, prefecture, total,
+  # six age groups, five severity classes); from 2017 eight location columns
+  # follow. Some sheets also contain unnamed empty columns and empty rows.
   FDMA_COLS <- c(
     "date", "pref_code", "total",
     "age_neonate", "age_infant", "age_child", "age_adult", "age_elderly", "age_unknown",
@@ -129,18 +132,24 @@ if (!exists(".HSWBGT_DATA_LOADED", envir = globalenv()) ||
   read_fdma_file <- function(filepath) {
     sheets <- excel_sheets(filepath)
     dfs <- lapply(sheets, function(sh) {
-      # .name_repair = "minimal": the published sheets repeat a header ("その他");
-      # names are overwritten by position below, so no repair message is needed.
       df <- read_excel(filepath, sheet = sh, .name_repair = "minimal")
-      if (ncol(df) != length(FDMA_COLS)) {
-        stop(sprintf("%s / sheet %s: expected %d columns, found %d",
-                     basename(filepath), sh, length(FDMA_COLS), ncol(df)))
+      df <- df[, nzchar(trimws(names(df))), drop = FALSE]     # drop unnamed (empty) columns
+      if (!ncol(df) %in% c(14L, 22L)) {
+        stop(sprintf("%s / sheet %s: expected 14 or 22 named columns, found %d",
+                     basename(filepath), sh, ncol(df)))
       }
-      colnames(df) <- FDMA_COLS
+      names(df) <- FDMA_COLS[seq_len(ncol(df))]
+      df <- df[!is.na(df$date), , drop = FALSE]                # drop empty rows
+      for (v in setdiff(FDMA_COLS, names(df))) df[[v]] <- NA_real_   # no location columns before 2017
       df$date <- as.Date(df$date)
-      df
+      df[, FDMA_COLS]
     })
-    bind_rows(dfs)
+    out <- bind_rows(dfs)
+    count_cols <- setdiff(FDMA_COLS, "date")
+    if (!all(vapply(out[count_cols], is.numeric, logical(1)))) {
+      stop(sprintf("%s: non-numeric count columns", basename(filepath)))
+    }
+    out
   }
 
   cat("Loading FDMA data...\n")
@@ -188,6 +197,8 @@ if (!exists(".HSWBGT_DATA_LOADED", envir = globalenv()) ||
   cat("Age-subtotal mismatches (>0):", sum(age_mismatch > 0, na.rm = TRUE), "\n")
   stopifnot(n_distinct(fdma$pref_code) == 47, all(sort(unique(fdma$pref_code)) == 1:47),
             all(sort(unique(fdma$year)) == 2015:2023), all(fdma$month %in% 6:9))
+  if (anyDuplicated(fdma[, c("date", "pref_code")])) stop("Duplicated date x prefecture rows in the FDMA data.")
+  stopifnot(nrow(fdma) == 47L * n_distinct(fdma$date))   # every prefecture on every June-September day
 
   # Daily WBGTmax per prefectural capital (date, pref_code, wbgt_max)
   wbgt_csv <- find_data("wbgt_daily_2015_2023.csv")

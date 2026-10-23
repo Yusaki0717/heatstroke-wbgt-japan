@@ -74,12 +74,13 @@ with these exact names:
 Source: https://www.fdma.go.jp/disaster/heatstroke/post3.html
 
 Each workbook contains one worksheet per month (e.g. `2017_06`). The loader in
-`R/00_setup.R` keeps the June–September sheets and renames the 22 columns, in
+`R/00_setup.R` keeps the June–September sheets and renames the columns, in
 their published order, to `date, pref_code, total`, six age columns
 (`age_neonate … age_unknown`), five severity columns
-(`sev_death, sev_severe, sev_moderate, sev_mild, sev_other`) and eight
-location columns. The analysis uses `date, pref_code, total, sev_*,
-age_elderly`. "Severe cases" are `sev_death + sev_severe`; "non-severe cases"
+(`sev_death, sev_severe, sev_moderate, sev_mild, sev_other`) and, from 2017,
+eight location columns (the 2015 and 2016 workbooks have 14 columns without
+them; the loader accepts both layouts and ignores empty rows and unnamed
+columns). The analysis uses `date, pref_code, total, sev_*, age_elderly`. "Severe cases" are `sev_death + sev_severe`; "non-severe cases"
 are `sev_moderate + sev_mild` (`sev_other`, 0.53 % of dispatches, belongs to
 neither stratum).
 
