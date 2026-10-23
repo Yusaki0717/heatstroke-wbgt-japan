@@ -1,0 +1,61 @@
+=== LATITUDE SUPPORT SENSITIVITY ===
+             period               set  n      chi2 df            p
+chi2   pre_pandemic            all_47 47 69.725213  3 4.887617e-15
+chi21  pre_pandemic observed_p95_only 43 46.455726  3 4.537231e-10
+chi22      pandemic            all_47 47 50.227445  3 7.145974e-11
+chi23      pandemic observed_p95_only 44 39.294275  3 1.503556e-08
+chi24 post_pandemic            all_47 47  5.968694  3 1.131433e-01
+chi25 post_pandemic observed_p95_only 47  5.968694  3 1.131433e-01
+      pct_explained
+chi2      69.859863
+chi21     57.613204
+chi22     12.977427
+chi23      5.819157
+chi24      3.275534
+chi25      3.275534
+
+=== DECLINES BY SET ===
+                                    set decline_pct
+1                                all_47    43.55693
+2                     exclude_yamaguchi    43.98730
+3               exclude_station_changes    42.84231
+4 exclude_yamaguchi_and_station_changes    43.30282
+5                     observed_p95_only    43.00254
+
+=== SEVERITY DECLINES ===
+    outcome decline_pct
+1    severe    42.93736
+2 nonsevere    43.32957
+
+=== BLUP EXTREMES ===
+         period   min_rr  min_pref    max_rr max_pref
+1  pre_pandemic 7.020368 Hiroshima 15.451888 Hokkaido
+2      pandemic 7.025476   Tottori 11.046944   Aomori
+3 post_pandemic 4.036999 Kagoshima  7.933963    Chiba
+  min_change min_pref max_change  max_pref n_declined
+1  -61.87791 Hokkaido  -16.05268 Hiroshima         47
+
+=== DEATH DECLINE ===
+       outcome decline_pct
+1  death_total    37.27718
+2 severe_total    23.92855
+3        total    37.70239
+
+=== ATTRIBUTABLE DISPLAY VALUES ===
+        outcome        period reference reference_wbgt total_ead        an
+3  all_severity  pre_pandemic       P50           27.5    309725 217839.94
+7  all_severity      pandemic       P50           27.5    111120  73042.51
+11 all_severity post_pandemic       P50           27.5    156173 102945.11
+         af summers an_annual ead_annual     an_lo     an_hi    af_lo    af_hi
+3  70.33334       5  43567.99    61945.0 216075.68 219014.52 69.76372 70.71257
+7  65.73300       2  36521.26    55560.0  71683.22  73684.54 64.50974 66.31078
+11 65.91736       2  51472.56    78086.5 100567.33 104065.45 64.39483 66.63473
+   outcome        period reference reference_wbgt total_ead       an       af
+13  severe  pre_pandemic       P50           27.5      7556 6035.838 79.88139
+14  severe      pandemic       P50           27.5      3089 2284.801 73.96572
+15  severe post_pandemic       P50           27.5      3602 2768.751 76.86706
+   summers an_annual ead_annual an_lo an_hi af_lo af_hi
+13       5  1207.168     1511.2    NA    NA    NA    NA
+14       2  1142.401     1544.5    NA    NA    NA    NA
+15       2  1384.376     1801.0    NA    NA    NA    NA
+END|2026-08-25 17:33:13|STATUS=PASS
