@@ -1,13 +1,18 @@
 # ---- Data (do NOT commit; download from official sources, see README) ----
 data/*.xlsx
-data/*.csv
 data/*.xls
+data/*.csv
 !data/README.md
+!data/pref_metadata.csv
 
-# ---- Analysis outputs ----
+# ---- Third-party code fetched at run time by R/00_setup.R (see README, "attrdl.R") ----
+R/attrdl.R
+
+# ---- Analysis outputs of a rerun (the archived manuscript outputs live in results/) ----
 output/
 *.pdf
 *.png
+*.tiff
 
 # ---- R session / IDE ----
 .Rproj.user/
