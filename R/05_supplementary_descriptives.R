@@ -65,7 +65,8 @@ cat(sprintf("TABLE1|prefecture_days=%d|observed_wbgt=%d|missing_wbgt_days=%d|ead
             nrow(dat), sum(!is.na(dat$wbgt_max)), sum(is.na(dat$wbgt_max)),
             sum(dat$total[is.na(dat$wbgt_max)]),
             paste(t1_periods$year_month_strata, collapse = "/")))
-stopifnot(nrow(t1) == 4L, all(conv == 47L))
+stopifnot(nrow(t1) == 4L)
+guard("table1_all_47_converged", all(conv == 47L), paste(conv, collapse = "/"))
 
 # ---- Table S3: days above 30 C for the three most truncated prefectures ------
 cat("\n=== TABLE S3 ===\n")
@@ -167,7 +168,7 @@ stopifnot(isTRUE(all.equal(share_summary$an_total[match(af02$period, share_summa
                            af02$an, tolerance = 1e-8)))
 print(as.data.frame(share_summary))
 write_csv(share_summary, "attributable_share_ge33.csv")
-stopifnot(nrow(share) == 141L)
+guard("alert_share_fits_all_47x3", nrow(share) == 141L, nrow(share))
 
 # ---- Figure S1: prefecture RR at P95 against latitude ------------------------
 cat("\n=== FIGURE S1 ===\n")
