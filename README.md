@@ -10,7 +10,8 @@ dispatches (EAD) across the 47 Japanese prefectures in three periods
 wet-bulb globe temperature and heat-related emergency ambulance dispatches
 across Japan: a multi-prefecture time-series analysis spanning the COVID-19
 pandemic and national Heatstroke Alert implementation (2015–2023).*
-Manuscript hp-2026-00307n, revision 2 (under review).
+*Environmental Health Perspectives*, accepted for publication (November 2026;
+in press; manuscript hp-2026-00307n).
 
 > **Release status.** This repository holds the corrected ("summer-grouped")
 > pipeline described in the revision-2 manuscript and Response to Reviewers.
@@ -19,8 +20,9 @@ Manuscript hp-2026-00307n, revision 2 (under review).
 > prepared for the public release (see [Provenance](#provenance)). The
 > archived machine-readable outputs of that run are in `results/`, and a
 > rerun of this repository on the study data reproduces them (see
-> [Verification](#verification)). A DOI-archived release will follow
-> acceptance.
+> [Verification](#verification)). Release `v1.0.0` is the version
+> corresponding to the accepted article; its Zenodo DOI will be added here
+> once minted.
 
 ---
 
@@ -285,8 +287,11 @@ Gunma, Saitama, Chiba, Tokyo, Kanagawa, Yamanashi and Nagano (`R/05`).
 
 ## Citation
 
-If you use this code, please cite the paper above. A `CITATION.cff` and a
-DOI-archived release will be added on acceptance.
+If you use this code, please cite the article above and the software release.
+Citation metadata for both is in [`CITATION.cff`](CITATION.cff) (GitHub shows
+a "Cite this repository" button from it). The article DOI and the Zenodo DOI
+of release `v1.0.0` will be added to `CITATION.cff` and to this section as
+soon as they are available.
 
 ## License
 
