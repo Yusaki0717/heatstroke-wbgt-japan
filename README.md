@@ -20,9 +20,9 @@ in press; manuscript hp-2026-00307n).
 > prepared for the public release (see [Provenance](#provenance)). The
 > archived machine-readable outputs of that run are in `results/`, and a
 > rerun of this repository on the study data reproduces them (see
-> [Verification](#verification)). Release `v1.0.0` is the version
-> corresponding to the accepted article; its Zenodo DOI will be added here
-> once minted.
+> [Verification](#verification)). Release `v1.0` is the version
+> corresponding to the accepted article and is archived on Zenodo:
+> https://doi.org/10.5281/zenodo.23901566.
 
 ---
 
@@ -287,11 +287,18 @@ Gunma, Saitama, Chiba, Tokyo, Kanagawa, Yamanashi and Nagano (`R/05`).
 
 ## Citation
 
-If you use this code, please cite the article above and the software release.
-Citation metadata for both is in [`CITATION.cff`](CITATION.cff) (GitHub shows
-a "Cite this repository" button from it). The article DOI and the Zenodo DOI
-of release `v1.0.0` will be added to `CITATION.cff` and to this section as
-soon as they are available.
+If you use this code, please cite the article and the software release.
+
+- Huang P, Zhang J. Temporal changes in the association between wet-bulb globe
+  temperature and heat-related emergency ambulance dispatches across Japan: a
+  multi-prefecture time-series analysis spanning the COVID-19 pandemic and
+  national Heatstroke Alert implementation (2015–2023). *Environmental Health
+  Perspectives*, in press.
+- Huang P, Zhang J. heatstroke-wbgt-japan, release v1.0. Zenodo.
+  https://doi.org/10.5281/zenodo.23901566
+
+Citation metadata is in [`CITATION.cff`](CITATION.cff); the article DOI will be
+added when assigned.
 
 ## License
 
