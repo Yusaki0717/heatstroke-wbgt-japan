@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite both the article and the software release."
+type: software
+title: "heatstroke-wbgt-japan: two-stage DLNM analysis of WBGT and heat-related emergency ambulance dispatches across Japan, 2015-2023"
+abstract: "Analysis code and archived machine-readable outputs for a two-stage distributed lag non-linear model with multivariate meta-analysis of the association between daily maximum wet-bulb globe temperature and heat-related emergency ambulance dispatches across the 47 Japanese prefectures in three periods (2015-2019, 2020-2021, 2022-2023)."
+authors:
+  - family-names: Huang
+    given-names: Pengyu
+    affiliation: "Graduate School of Medical and Dental Sciences, Institute of Science Tokyo, Tokyo, Japan"
+  - family-names: Zhang
+    given-names: Jie
+    affiliation: "Fujian University of Traditional Chinese Medicine, Fuzhou, China"
+version: 1.0.0
+date-released: 2026-11-03
+repository-code: "https://github.com/Yusaki0717/heatstroke-wbgt-japan"
+license: MIT
+keywords:
+  - wet-bulb globe temperature
+  - heatstroke
+  - emergency ambulance dispatches
+  - distributed lag non-linear model
+  - meta-analysis
+  - attributable fraction
+  - Japan
+preferred-citation:
+  type: article
+  title: "Temporal changes in the association between wet-bulb globe temperature and heat-related emergency ambulance dispatches across Japan: a multi-prefecture time-series analysis spanning the COVID-19 pandemic and national Heatstroke Alert implementation (2015-2023)"
+  authors:
+    - family-names: Huang
+      given-names: Pengyu
+    - family-names: Zhang
+      given-names: Jie
+  journal: "Environmental Health Perspectives"
+  year: 2026
+  notes: "Accepted for publication; in press. Article DOI to be added."
