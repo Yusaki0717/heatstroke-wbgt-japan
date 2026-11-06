@@ -12,6 +12,7 @@ across Japan: a multi-prefecture time-series analysis spanning the COVID-19
 pandemic and national Heatstroke Alert implementation (2015–2023).*
 *Environmental Health Perspectives*, accepted for publication (November 2026;
 in press; manuscript hp-2026-00307n).
+https://doi.org/10.1021/EHP.6c00307.
 
 > **Release status.** This repository holds the corrected ("summer-grouped")
 > pipeline described in the revision-2 manuscript and Response to Reviewers.
@@ -293,12 +294,12 @@ If you use this code, please cite the article and the software release.
   temperature and heat-related emergency ambulance dispatches across Japan: a
   multi-prefecture time-series analysis spanning the COVID-19 pandemic and
   national Heatstroke Alert implementation (2015–2023). *Environmental Health
-  Perspectives*, in press.
+  Perspectives*, 2026, in press.
+  https://doi.org/10.1021/EHP.6c00307
 - Huang P, Zhang J. heatstroke-wbgt-japan, release v1.0. Zenodo.
   https://doi.org/10.5281/zenodo.23901566
 
-Citation metadata is in [`CITATION.cff`](CITATION.cff); the article DOI will be
-added when assigned.
+Citation metadata is in [`CITATION.cff`](CITATION.cff).
 
 ## License
 
